@@ -13,6 +13,7 @@ class CategoriesRepository implements ICategoryRepository {
   private constructor() {
     this.categories = [];
   }
+
   public create({ name, description }: Category) {
     const newCategory = new Category();
     Object.assign(newCategory, name, description);
