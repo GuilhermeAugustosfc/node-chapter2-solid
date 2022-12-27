@@ -1,11 +1,37 @@
-import { CategoriesRepository } from "../../repository/CategoriesRepository";
+import {
+  CategoriesRepository,
+  CategoryDTO,
+} from "../../repository/CategoriesRepository";
+import fs from "fs";
+import { parse as csvParse } from "csv-parse";
 
-CategoriesRepository;
 class ImportCategorieUseCase {
   constructor(private categoriesRepository: CategoriesRepository) {}
-  execute(file: any) {
-    // file.
-    // this.categoriesRepository.create(file)
+  loadCsv(file: Express.Multer.File): Promise<CategoryDTO[]> {
+    return new Promise((resolver, reject) => {
+      const categories: CategoryDTO[] = [];
+      const stream = fs.createReadStream(file.path);
+      const parserFile = csvParse();
+      stream.pipe(parserFile);
+
+      parserFile
+        .on("data", async (line) => {
+          const { name, description } = line;
+          categories.push({
+            name,
+            description,
+          });
+        })
+        .on("end", () => {
+          resolver(categories);
+        })
+        .on("error", (err) => {
+          reject(err);
+        });
+    });
+  }
+  async execute(file: Express.Multer.File): Promise<void> {
+    const categories = await this.loadCsv(file);
   }
 }
 
