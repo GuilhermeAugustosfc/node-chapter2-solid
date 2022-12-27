@@ -8,6 +8,7 @@ const catogoriesRoutes = Router();
 
 const upload = multer({ dest: "./temp" });
 catogoriesRoutes.post("/", createCategoriesControler.handler);
+
 catogoriesRoutes.get("/", listCategoriesControler.handler);
 catogoriesRoutes.get(
   "/import",
